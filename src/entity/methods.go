@@ -49,9 +49,9 @@ func (e *entityImpl) AddClassifications(
 
 func (e *entityImpl) AddClassificationsByUniqueAttribute(
 	classifications []*models.AtlasClassification,
-	attributes map[string]string,
+	attributes *models.QueryAttributes,
 ) error {
-	err := utils.ValidateAttributes(attributes)
+	err := utils.ValidateQueryAttributes(attributes)
 	if err != nil {
 		return err
 	}
@@ -84,9 +84,9 @@ func (e *entityImpl) AddLabel(guid string, labels []string) error {
 
 func (e *entityImpl) AddLabelsByUniqueAttribute(
 	labels []string,
-	attributes map[string]string,
+	attributes *models.QueryAttributes,
 ) error {
-	err := utils.ValidateAttributes(attributes)
+	err := utils.ValidateQueryAttributes(attributes)
 	if err != nil {
 		return err
 	}
@@ -122,9 +122,9 @@ func (e *entityImpl) AddOrUpdateBusinessMetadata(
 
 func (e *entityImpl) AddOrUpdateBusinessMetadataAttributes(
 	businessMetadataAttributes map[string]interface{},
-	attributes map[string]string,
+	attributes *models.QueryAttributes,
 ) error {
-	err := utils.ValidateAttributes(attributes)
+	err := utils.ValidateQueryAttributes(attributes)
 	if err != nil {
 		return err
 	}
@@ -159,10 +159,15 @@ func (e *entityImpl) GetByGuid(
 }
 
 func (e *entityImpl) GetByUniqueAttributes(
-	uniqueAttributes map[string]string,
+	uniqueAttributes *models.QueryAttributes,
+	params *models.QueryParams,
 	customUnmarshaler func(data []byte) (*models.AtlasEntityWithExtInfo, error),
 ) (*models.AtlasEntityWithExtInfo, error) {
-	err := utils.ValidateData(uniqueAttributes)
+	err := utils.ValidateQueryAttributes(uniqueAttributes)
+	if err != nil {
+		return nil, err
+	}
+	err = utils.ValidateData(uniqueAttributes)
 	if err != nil {
 		return nil, err
 	}

@@ -16,18 +16,18 @@ type Entity interface {
 	) error
 	AddClassificationsByUniqueAttribute(
 		classifications []*models.AtlasClassification,
-		attributes map[string]string,
+		attributes *models.QueryAttributes,
 	) error
 	AddLabel(guid string, label []string) error
 	AddLabelsByUniqueAttribute(
-		labels []string, attributes map[string]string,
+		labels []string, attributes *models.QueryAttributes,
 	) error
 	AddOrUpdateBusinessMetadata(
 		guid string, businessMetadata map[string]interface{},
 	) error
 	AddOrUpdateBusinessMetadataAttributes(
 		businessMetadataAttributes map[string]interface{},
-		attributes map[string]string,
+		attributes *models.QueryAttributes,
 	) error
 	CreateOrUpdate(
 		data *models.EntityCreateOrUpdateRequest,
@@ -50,7 +50,8 @@ type Entity interface {
 		),
 	) (*models.AtlasEntityWithExtInfo, error)
 	GetByUniqueAttributes(
-		uniqueAttributes map[string]string,
+		uniqueAttributes *models.QueryAttributes,
+		params *models.QueryParams,
 		customUnmarshaler func(data []byte) (
 			*models.AtlasEntityWithExtInfo, error,
 		),

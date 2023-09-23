@@ -30,9 +30,31 @@ func ValidateAttributes(attributes map[string]string) error {
 	return nil
 }
 
+func ValidateTypeName(typeName string) error {
+	if typeName == "" {
+		return models.EmptyTypeNameError
+	}
+	return nil
+}
+
 func ValidateData(data interface{}) error {
 	if data == nil {
 		return models.NoDataProvidedError
+	}
+	return nil
+}
+
+func ValidateQueryAttributes(attributes *models.QueryAttributes) error {
+	if attributes == nil {
+		return models.NoAttributesProvided
+	}
+
+	if attributes.TypeName == "" {
+		return models.EmptyTypeNameError
+	}
+
+	if attributes.Attributes == nil {
+		return models.NoAttributesProvided
 	}
 	return nil
 }

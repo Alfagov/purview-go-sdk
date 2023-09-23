@@ -16,6 +16,7 @@ var (
 	ClassificationsError = errors.New("classification is nil")
 	NoDataProvidedError  = errors.New("no data provided")
 	NoAttributesProvided = errors.New("no attributes provided")
+	EmptyTypeNameError   = errors.New("typeName is empty")
 )
 
 func (e ErrorResponse) UnmarshalJson(data []byte) (*ErrorResponse, error) {
