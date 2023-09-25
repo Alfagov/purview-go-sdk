@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/Alfagov/purview-go-sdk/src/models"
+	"github.com/Alfagov/purview-go-sdk/src/paths"
 	"github.com/Alfagov/purview-go-sdk/src/utils"
 	"net/http"
 )
@@ -18,7 +19,7 @@ func (e *entityImpl) AddClassification(
 		return err
 	}
 
-	path := ""
+	path := paths.AddClassificationPath
 
 	data := map[string]interface{}{
 		"classification": classification,
@@ -26,6 +27,10 @@ func (e *entityImpl) AddClassification(
 	}
 
 	resp, err := e.Execute(http.MethodPost, path, data)
+	if err != nil {
+		return err
+	}
+
 	return ManageEmptyResponse(resp)
 }
 
@@ -41,9 +46,13 @@ func (e *entityImpl) AddClassifications(
 		return err
 	}
 
-	path := ""
+	path := paths.ClassificationsPath(guid)
 
 	resp, err := e.Execute(http.MethodPost, path, classifications)
+	if err != nil {
+		return err
+	}
+
 	return ManageEmptyResponse(resp)
 }
 
@@ -60,9 +69,13 @@ func (e *entityImpl) AddClassificationsByUniqueAttribute(
 		return err
 	}
 
-	path := ""
+	path := paths.AddClassificationsByUniqueAttributePath(attributes)
 
 	resp, err := e.Execute(http.MethodPost, path, classifications)
+	if err != nil {
+		return err
+	}
+
 	return ManageEmptyResponse(resp)
 }
 
@@ -76,9 +89,13 @@ func (e *entityImpl) AddLabel(guid string, labels []string) error {
 		return err
 	}
 
-	path := ""
+	path := paths.LabelPath(guid)
 
 	resp, err := e.Execute(http.MethodPost, path, labels)
+	if err != nil {
+		return err
+	}
+
 	return ManageEmptyResponse(resp)
 }
 
@@ -95,15 +112,20 @@ func (e *entityImpl) AddLabelsByUniqueAttribute(
 		return err
 	}
 
-	path := ""
+	path := paths.LabelsByUniqueAttributePath(attributes)
 
 	resp, err := e.Execute(http.MethodPost, path, labels)
+	if err != nil {
+		return err
+	}
+
 	return ManageEmptyResponse(resp)
 }
 
 func (e *entityImpl) AddOrUpdateBusinessMetadata(
 	guid string,
 	businessMetadata map[string]interface{},
+	options *models.QueryParams,
 ) error {
 	err := utils.ValidateGuid(guid)
 	if err != nil {
@@ -114,28 +136,33 @@ func (e *entityImpl) AddOrUpdateBusinessMetadata(
 		return err
 	}
 
-	path := ""
+	path := paths.BusinessMetadataPath(guid, options)
 
 	resp, err := e.Execute(http.MethodPost, path, businessMetadata)
+	if err != nil {
+		return err
+	}
+
 	return ManageEmptyResponse(resp)
 }
 
+// TODO: implement me
 func (e *entityImpl) AddOrUpdateBusinessMetadataAttributes(
 	businessMetadataAttributes map[string]interface{},
-	attributes *models.QueryAttributes,
+	guid string, bmName string,
 ) error {
-	err := utils.ValidateQueryAttributes(attributes)
-	if err != nil {
-		return err
-	}
-	err = utils.ValidateData(businessMetadataAttributes)
+	err := utils.ValidateData(businessMetadataAttributes)
 	if err != nil {
 		return err
 	}
 
-	path := ""
+	path := paths.BusinessMetadataAttributePath(guid, bmName)
 
 	resp, err := e.Execute(http.MethodPost, path, businessMetadataAttributes)
+	if err != nil {
+		return err
+	}
+
 	return ManageEmptyResponse(resp)
 }
 
@@ -148,14 +175,14 @@ func (e *entityImpl) GetByGuid(
 		return nil, err
 	}
 
-	path := ""
+	path := paths.EntityByGuidPath(guid)
 
 	res, err := e.Execute(http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return ManageGetEntityResponse(res, customUnmarshaler)
+	return ManageEntityWithExtInfoResponse(res, customUnmarshaler)
 }
 
 func (e *entityImpl) GetByUniqueAttributes(
@@ -172,18 +199,19 @@ func (e *entityImpl) GetByUniqueAttributes(
 		return nil, err
 	}
 
-	path := ""
+	path := paths.EntityByUniqueAttributePath(uniqueAttributes)
 
 	res, err := e.Execute(http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return ManageGetEntityResponse(res, customUnmarshaler)
+	return ManageEntityWithExtInfoResponse(res, customUnmarshaler)
 }
 
 func (e *entityImpl) CreateOrUpdateEntities(
 	data *models.EntityCreateOrUpdateBulkRequest,
+	options *models.QueryParams,
 	customUnmarshaler func(data []byte) (*models.EntityMutationResponse, error),
 ) (*models.EntityMutationResponse, error) {
 	err := utils.ValidateData(data)
@@ -191,18 +219,19 @@ func (e *entityImpl) CreateOrUpdateEntities(
 		return nil, err
 	}
 
-	path := ""
+	path := paths.CreateOrUpdateEntitiesPath(options)
 
 	res, err := e.Execute(http.MethodPost, path, data)
 	if err != nil {
 		return nil, err
 	}
 
-	return ManageENtityMutationResponse(res, customUnmarshaler)
+	return ManageEntityMutationResponse(res, customUnmarshaler)
 }
 
 func (e *entityImpl) CreateOrUpdate(
 	data *models.EntityCreateOrUpdateRequest,
+	options *models.QueryParams,
 	customUnmarshaler func(data []byte) (*models.EntityMutationResponse, error),
 ) (*models.EntityMutationResponse, error) {
 	err := utils.ValidateData(data)
@@ -210,18 +239,19 @@ func (e *entityImpl) CreateOrUpdate(
 		return nil, err
 	}
 
-	path := ""
+	path := paths.CreateOrUpdateEntityPath(options)
 
 	res, err := e.Execute(http.MethodPost, path, data)
 	if err != nil {
 		return nil, err
 	}
 
-	return ManageENtityMutationResponse(res, customUnmarshaler)
+	return ManageEntityMutationResponse(res, customUnmarshaler)
 }
 
 func (e *entityImpl) DeleteBusinessMetadata(
-	guid string, businessMetadata map[string]interface{},
+	guid string, options *models.QueryParams,
+	businessMetadata map[string]interface{},
 ) error {
 	err := utils.ValidateGuid(guid)
 	if err != nil {
@@ -232,28 +262,29 @@ func (e *entityImpl) DeleteBusinessMetadata(
 		return err
 	}
 
-	path := ""
+	path := paths.BusinessMetadataPath(guid, options)
 
 	resp, err := e.Execute(http.MethodDelete, path, businessMetadata)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
 func (e *entityImpl) DeleteBusinessMetadataAttributes(
-	attributes map[string]string, businessMetadata map[string]interface{},
+	guid string, bmName string, businessMetadata map[string]interface{},
 ) error {
-	err := utils.ValidateAttributes(attributes)
+	err := utils.ValidateData(businessMetadata)
 	if err != nil {
 		return err
 	}
 
-	err = utils.ValidateData(businessMetadata)
-	if err != nil {
-		return err
-	}
-
-	path := ""
+	path := paths.BusinessMetadataAttributePath(guid, bmName)
 
 	resp, err := e.Execute(http.MethodDelete, path, businessMetadata)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -263,9 +294,12 @@ func (e *entityImpl) DeleteByGuid(guid string) error {
 		return err
 	}
 
-	path := ""
+	path := paths.EntityByGuidPath(guid)
 
 	resp, err := e.Execute(http.MethodDelete, path, nil)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -275,21 +309,27 @@ func (e *entityImpl) DeleteByGuids(guids []string) error {
 		return err
 	}
 
-	path := ""
+	path := paths.DeleteEntitiesByGuids(guids)
 
 	_, err = e.Execute(http.MethodDelete, path, nil)
 	return err
 }
 
-func (e *entityImpl) DeleteByUniqueAttribute(uniqueAttributes map[string]string) error {
-	err := utils.ValidateAttributes(uniqueAttributes)
+func (e *entityImpl) DeleteByUniqueAttribute(
+	uniqueAttributes *models.
+		QueryAttributes,
+) error {
+	err := utils.ValidateQueryAttributes(uniqueAttributes)
 	if err != nil {
 		return err
 	}
 
-	path := ""
+	path := paths.EntityByUniqueAttributePath(uniqueAttributes)
 
 	resp, err := e.Execute(http.MethodDelete, path, nil)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -305,21 +345,32 @@ func (e *entityImpl) DeleteClassification(
 		return err
 	}
 
-	path := ""
+	path := paths.ClassificationPath(guid, classificationName)
 
 	resp, err := e.Execute(http.MethodDelete, path, nil)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
-func (e *entityImpl) DeleteClassificationByUniqueAttribute(uniqueAttributes map[string]string) error {
-	err := utils.ValidateAttributes(uniqueAttributes)
+func (e *entityImpl) DeleteClassificationByUniqueAttribute(
+	name string, uniqueAttributes *models.QueryAttributes,
+) error {
+	err := utils.ValidateQueryAttributes(uniqueAttributes)
 	if err != nil {
 		return err
 	}
 
-	path := ""
+	path := paths.DeleteClassificationByUniqueAttributePath(
+		uniqueAttributes,
+		name,
+	)
 
 	resp, err := e.Execute(http.MethodDelete, path, nil)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -333,16 +384,16 @@ func (e *entityImpl) DeleteLabels(guid string, labels []string) error {
 		return err
 	}
 
-	path := ""
+	path := paths.LabelPath(guid)
 
-	resp, err := e.Execute(http.MethodDelete, path, nil)
+	resp, err := e.Execute(http.MethodDelete, path, labels)
 	return ManageEmptyResponse(resp)
 }
 
 func (e *entityImpl) DeleteLabelsByUniqueAttribute(
-	uniqueAttributes map[string]string, labels []string,
+	uniqueAttributes *models.QueryAttributes, labels []string,
 ) error {
-	err := utils.ValidateAttributes(uniqueAttributes)
+	err := utils.ValidateQueryAttributes(uniqueAttributes)
 	if err != nil {
 		return err
 	}
@@ -351,9 +402,12 @@ func (e *entityImpl) DeleteLabelsByUniqueAttribute(
 		return err
 	}
 
-	path := ""
+	path := paths.LabelsByUniqueAttributePath(uniqueAttributes)
 
 	resp, err := e.Execute(http.MethodDelete, path, nil)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -369,14 +423,14 @@ func (e *entityImpl) GetClassification(guid string, name string) (
 		return nil, err
 	}
 
-	path := ""
+	path := paths.ClassificationPath(guid, name)
 
 	res, err := e.Execute(http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return ManageGetClassificationResponse(res, nil)
+	return ManageClassificationResponse(res, nil)
 }
 
 func (e *entityImpl) GetClassifications(guid string) (
@@ -387,16 +441,17 @@ func (e *entityImpl) GetClassifications(guid string) (
 		return nil, err
 	}
 
-	path := ""
+	path := paths.ClassificationsPath(guid)
 
 	res, err := e.Execute(http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return ManageGetClassificationsResponse(res, nil)
+	return ManageClassificationsResponse(res, nil)
 }
 
+// TODO: fix me
 func (e *entityImpl) GetEntitiesByUniqueAttributes(uniqueAttributes map[string]string) (
 	*models.AtlasEntityWithExtInfo, error,
 ) {
@@ -412,7 +467,7 @@ func (e *entityImpl) GetEntitiesByUniqueAttributes(uniqueAttributes map[string]s
 		return nil, err
 	}
 
-	return ManageGetEntityResponse(res, nil)
+	return ManageEntityWithExtInfoResponse(res, nil)
 }
 
 func (e *entityImpl) GetHeader(guid string) (*models.AtlasEntityHeader, error) {
@@ -421,7 +476,7 @@ func (e *entityImpl) GetHeader(guid string) (*models.AtlasEntityHeader, error) {
 		return nil, err
 	}
 
-	path := ""
+	path := paths.HeaderPath(guid)
 
 	res, err := e.Execute(http.MethodGet, path, nil)
 	if err != nil {
@@ -434,6 +489,8 @@ func (e *entityImpl) GetHeader(guid string) (*models.AtlasEntityHeader, error) {
 func (e *entityImpl) GetSampleBusinessMetadataTemplate(templateName string) (
 	interface{}, error,
 ) {
+
+	//path := paths.SampleBusinessMetadataTemplatePath
 	//TODO implement me
 	panic("implement me")
 }
@@ -443,7 +500,7 @@ func (e *entityImpl) ImportBusinessMetadata() (
 	error,
 ) {
 
-	path := ""
+	path := paths.ImportBusinessMetadataPath
 
 	resp, err := e.Execute(http.MethodPost, path, nil)
 	if err != nil {
@@ -453,7 +510,7 @@ func (e *entityImpl) ImportBusinessMetadata() (
 	return ManageBulkImportResponse(resp, nil)
 }
 
-func (e *entityImpl) ListByGuids(guids []string) (
+func (e *entityImpl) ListByGuids(guids []string, options *models.QueryParams) (
 	*models.AtlasEntityWithExtInfo, error,
 ) {
 	err := utils.ValidateGuids(guids)
@@ -461,14 +518,14 @@ func (e *entityImpl) ListByGuids(guids []string) (
 		return nil, err
 	}
 
-	path := ""
+	path := paths.ListEntitiesByGuidsPath(guids, options)
 
 	resp, err := e.Execute(http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return ManageGetEntityResponse(resp, nil)
+	return ManageEntityWithExtInfoResponse(resp, nil)
 }
 
 func (e *entityImpl) PartialUpdateEntityAttributeByGuid(
@@ -491,7 +548,7 @@ func (e *entityImpl) PartialUpdateEntityAttributeByGuid(
 		return nil, err
 	}
 
-	return ManageENtityMutationResponse(resp, customUnmarshaler)
+	return ManageEntityMutationResponse(resp, customUnmarshaler)
 }
 
 func (e *entityImpl) PartialUpdateEntityByUniqueAttributes(
@@ -535,6 +592,9 @@ func (e *entityImpl) SetLabels(guid string, labels []string) error {
 	path := ""
 
 	resp, err := e.Execute(http.MethodPost, path, labels)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -554,6 +614,9 @@ func (e *entityImpl) SetLabelsByUniqueAttribute(
 	path := ""
 
 	resp, err := e.Execute(http.MethodPost, path, labels)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -573,6 +636,9 @@ func (e *entityImpl) UpdateClassifications(
 	path := ""
 
 	resp, err := e.Execute(http.MethodPost, path, classifications)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }
 
@@ -593,5 +659,8 @@ func (e *entityImpl) UpdateClassificationsByUniqueAttribute(
 	path := ""
 
 	resp, err := e.Execute(http.MethodPost, path, classifications)
+	if err != nil {
+		return err
+	}
 	return ManageEmptyResponse(resp)
 }

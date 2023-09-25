@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func ManageGetEntityResponse(
+func ManageEntityWithExtInfoResponse(
 	response *http.Response,
 	customUnmarshaler func(data []byte) (*models.AtlasEntityWithExtInfo, error),
 ) (*models.AtlasEntityWithExtInfo, error) {
@@ -89,7 +89,7 @@ func ManageBulkImportResponse(
 	return models.BulkImportResponse{}.UnmarshalJson(body)
 }
 
-func ManageENtityMutationResponse(
+func ManageEntityMutationResponse(
 	response *http.Response,
 	customUnmarshaler func(data []byte) (*models.EntityMutationResponse, error),
 ) (*models.EntityMutationResponse, error) {
@@ -115,7 +115,7 @@ func ManageENtityMutationResponse(
 	return models.EntityMutationResponse{}.UnmarshalJson(body)
 }
 
-func ManageGetClassificationResponse(
+func ManageClassificationResponse(
 	response *http.Response,
 	customUnmarshaler func(data []byte) (*models.AtlasClassification, error),
 ) (*models.AtlasClassification, error) {
@@ -141,7 +141,7 @@ func ManageGetClassificationResponse(
 	return models.AtlasClassification{}.UnmarshalJson(body)
 }
 
-func ManageGetClassificationsResponse(
+func ManageClassificationsResponse(
 	response *http.Response,
 	customUnmarshaler func(data []byte) (*models.AtlasClassifications, error),
 ) (*models.AtlasClassifications, error) {

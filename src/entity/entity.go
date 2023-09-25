@@ -24,13 +24,15 @@ type Entity interface {
 	) error
 	AddOrUpdateBusinessMetadata(
 		guid string, businessMetadata map[string]interface{},
+		options *models.QueryParams,
 	) error
 	AddOrUpdateBusinessMetadataAttributes(
 		businessMetadataAttributes map[string]interface{},
-		attributes *models.QueryAttributes,
+		guid string, bmName string,
 	) error
 	CreateOrUpdate(
 		data *models.EntityCreateOrUpdateRequest,
+		options *models.QueryParams,
 		customUnmarshaler func(data []byte) (
 			*models.EntityMutationResponse,
 			error,
@@ -38,6 +40,7 @@ type Entity interface {
 	) (*models.EntityMutationResponse, error)
 	CreateOrUpdateEntities(
 		data *models.EntityCreateOrUpdateBulkRequest,
+		options *models.QueryParams,
 		customUnmarshaler func(data []byte) (
 			*models.EntityMutationResponse,
 			error,
@@ -57,20 +60,24 @@ type Entity interface {
 		),
 	) (*models.AtlasEntityWithExtInfo, error)
 	DeleteBusinessMetadata(
-		guid string, businessMetadata map[string]interface{},
+		guid string,
+		options *models.QueryParams,
+		businessMetadata map[string]interface{},
 	) error
 	DeleteBusinessMetadataAttributes(
-		attributes map[string]string,
+		guid string, bmName string,
 		businessMetadata map[string]interface{},
 	) error
 	DeleteByGuid(guid string) error
 	DeleteByGuids(guids []string) error
-	DeleteByUniqueAttribute(uniqueAttributes map[string]string) error
+	DeleteByUniqueAttribute(uniqueAttributes *models.QueryAttributes) error
 	DeleteClassification(guid string, classificationName string) error
-	DeleteClassificationByUniqueAttribute(uniqueAttributes map[string]string) error
+	DeleteClassificationByUniqueAttribute(
+		name string, uniqueAttributes *models.QueryAttributes,
+	) error
 	DeleteLabels(guid string, labels []string) error
 	DeleteLabelsByUniqueAttribute(
-		uniqueAttributes map[string]string,
+		uniqueAttributes *models.QueryAttributes,
 		labels []string,
 	) error
 	GetClassification(guid string, name string) (
@@ -86,7 +93,10 @@ type Entity interface {
 		interface{}, error,
 	)
 	ImportBusinessMetadata() (*models.BulkImportResponse, error)
-	ListByGuids(guids []string) (*models.AtlasEntityWithExtInfo, error)
+	ListByGuids(guids []string, options *models.QueryParams) (
+		*models.
+			AtlasEntityWithExtInfo, error,
+	)
 	PartialUpdateEntityAttributeByGuid(
 		guid string, name string, value interface{},
 		customUnmarshaler func(data []byte) (

@@ -13,7 +13,15 @@ type QueryAttribute struct {
 }
 
 func (q *QueryAttribute) Encode() string {
-	return fmt.Sprintf("attr:%s:%s", q.Key, q.Value)
+	return fmt.Sprintf("attr:%s=%s", q.Key, q.Value)
+}
+
+func (q *QueryAttributes) Encode() string {
+	encodedAttributes := ""
+	for _, attr := range q.Attributes {
+		encodedAttributes += attr.Encode() + "&"
+	}
+	return encodedAttributes
 }
 
 type QueryParams struct {
@@ -30,6 +38,10 @@ func (qp *QueryParams) MinExtInfo(value string) {
 
 func (qp *QueryParams) BusinessAttributeUpdateBehavior(value businessAttributeUpdateBehavior) {
 	qp.Params["businessAttributeUpdateBehavior"] = string(value)
+}
+
+func (qp *QueryParams) IsOverwrite(value string) {
+	qp.Params["isOverwrite"] = value
 }
 
 type businessAttributeUpdateBehavior string
