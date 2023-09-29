@@ -22,7 +22,7 @@ func (e *entityImpl) AddOrUpdateBusinessMetadata(
 		return err
 	}
 
-	path := paths.BusinessMetadataBasePath(guid, options)
+	path := paths.BusinessMetadataPath(guid, options)
 
 	resp, err := e.Execute(http.MethodPost, path, businessMetadata)
 	if err != nil {
@@ -64,7 +64,7 @@ func (e *entityImpl) DeleteBusinessMetadata(
 		return err
 	}
 
-	path := paths.BusinessMetadataBasePath(guid, options)
+	path := paths.BusinessMetadataPath(guid, options)
 
 	resp, err := e.Execute(http.MethodDelete, path, businessMetadata)
 	if err != nil {
