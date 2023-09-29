@@ -6,17 +6,21 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 )
 
 type HttpClient interface {
-	Execute(method string, url string, body interface{}) (*http.Response, error)
+	Execute(method string, url *url.URL, body interface{}) (
+		*http.Response,
+		error,
+	)
 }
 
 type HttpClientImpl struct {
 	*http.Client
-	basePath string
-	token    string
+	host  string
+	token string
 }
 
 func NewHttpClient(basePath string) HttpClient {
@@ -30,7 +34,7 @@ func NewHttpClient(basePath string) HttpClient {
 			Transport: transport,
 			Timeout:   time.Second * 10,
 		},
-		basePath: basePath,
+		host: basePath,
 	}
 }
 
@@ -38,7 +42,10 @@ func (c *HttpClientImpl) SetToken(token string) {
 	c.token = token
 }
 
-func (c *HttpClientImpl) Execute(method string, url string, body interface{}) (*http.Response, error) {
+func (c *HttpClientImpl) Execute(
+	method string, url *url.URL,
+	body interface{},
+) (*http.Response, error) {
 
 	reqBody, err := marshalBody(body)
 	if err != nil {
@@ -67,14 +74,19 @@ func marshalBody(body interface{}) (io.Reader, error) {
 }
 
 func (c *HttpClientImpl) createUrl(path string) string {
-	return fmt.Sprintf("%s%s", c.basePath, path)
+	return fmt.Sprintf("%s%s", c.host, path)
 }
 
-func (c *HttpClientImpl) createRequest(method string, path string, body io.Reader) (*http.Request, error) {
+func (c *HttpClientImpl) createRequest(
+	method string,
+	path *url.URL,
+	body io.Reader,
+) (*http.Request, error) {
 
-	path = c.createUrl(path)
+	path.Host = c.host
+	path.Scheme = "https"
 
-	req, err := http.NewRequest(method, path, body)
+	req, err := http.NewRequest(method, path.String(), body)
 	if err != nil {
 		return nil, err
 	}

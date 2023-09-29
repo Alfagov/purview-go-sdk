@@ -1,6 +1,10 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"net/url"
+	"strconv"
+)
 
 type QueryAttributes struct {
 	TypeName   string `json:"typeName"`
@@ -16,12 +20,40 @@ func (q *QueryAttribute) Encode() string {
 	return fmt.Sprintf("attr:%s=%s", q.Key, q.Value)
 }
 
+func (q *QueryAttribute) EncodeIdx(idx int) string {
+	return fmt.Sprintf(
+		"attr_%s:%s=%s",
+		strconv.Itoa(idx),
+		q.Key,
+		q.Value,
+	)
+}
+
 func (q *QueryAttributes) Encode() string {
-	encodedAttributes := ""
+	values := url.Values{}
 	for _, attr := range q.Attributes {
-		encodedAttributes += attr.Encode() + "&"
+		values.Add("attr:"+attr.Key, attr.Value)
 	}
-	return encodedAttributes
+	return values.Encode()
+}
+
+func (q *QueryAttributes) ToUrlValues() url.Values {
+	values := url.Values{}
+	for _, attr := range q.Attributes {
+		values.Add(attr.Key, attr.Value)
+	}
+	return values
+}
+
+func (q *QueryAttributes) EncodeASC() string {
+	values := url.Values{}
+	for i, attr := range q.Attributes {
+		values.Add(
+			fmt.Sprintf("attr_%s:%s", strconv.Itoa(i), attr.Key),
+			attr.Value,
+		)
+	}
+	return values.Encode()
 }
 
 type QueryParams struct {
@@ -44,6 +76,21 @@ func (qp *QueryParams) IsOverwrite(value string) {
 	qp.Params["isOverwrite"] = value
 }
 
+func (qp *QueryParams) Encode(allowedParams map[string]bool) string {
+	if allowedParams == nil || qp.Params == nil {
+		return ""
+	}
+
+	values := url.Values{}
+	for key, value := range qp.Params {
+		if allowedParams[key] {
+			values.Add(key, value)
+		}
+	}
+
+	return values.Encode()
+}
+
 type businessAttributeUpdateBehavior string
 
 func BusinessAttributeUpdateBehavior(value string) businessAttributeUpdateBehavior {
@@ -53,9 +100,3 @@ func BusinessAttributeUpdateBehavior(value string) businessAttributeUpdateBehavi
 
 	return ""
 }
-
-/*const (
-	BusinessAttributeUpdateBehaviorMerge   = "merge"
-	BusinessAttributeUpdateBehaviorReplace = "replace"
-	BusinessAttributeUpdateBehaviorIgnore  = "ignore"
-)*/
