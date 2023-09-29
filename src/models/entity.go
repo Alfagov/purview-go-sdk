@@ -3,68 +3,68 @@ package models
 import "encoding/json"
 
 type AtlasClassification struct {
-	Attributes                       map[string]interface{} `json:"attributes"`
-	EntityGuid                       string                 `json:"entityGuid"`
-	EntityStatus                     Status                 `json:"entityStatus"`
-	LastModifiedTS                   string                 `json:"lastModifiedTS"`
-	RemovePropagationsOnEntityDelete bool                   `json:"removePropagationsOnEntityDelete"`
-	Source                           string                 `json:"source"`
-	TypeName                         string                 `json:"typeName"`
-	ValidityPeriods                  []TimeBoundary         `json:"validityPeriods"`
+	Attributes                       map[string]interface{} `json:"attributes,omitempty"`
+	EntityGuid                       string                 `json:"entityGuid,omitempty"`
+	EntityStatus                     Status                 `json:"entityStatus,omitempty"`
+	LastModifiedTS                   string                 `json:"lastModifiedTS,omitempty"`
+	RemovePropagationsOnEntityDelete bool                   `json:"removePropagationsOnEntityDelete,omitempty"`
+	Source                           string                 `json:"source,omitempty"`
+	TypeName                         string                 `json:"typeName,omitempty"`
+	ValidityPeriods                  []TimeBoundary         `json:"validityPeriods,omitempty"`
 }
 
 type AtlasClassifications struct {
-	List       []AtlasClassification `json:"list"`
-	PageSize   int                   `json:"pageSize"`
-	SortBy     string                `json:"sortBy"`
-	SortType   string                `json:"sortType"`
-	StartIndex int                   `json:"startIndex"`
-	TotalCount int                   `json:"totalCount"`
+	List       []AtlasClassification `json:"list,omitempty"`
+	PageSize   int                   `json:"pageSize,omitempty"`
+	SortBy     string                `json:"sortBy,omitempty"`
+	SortType   string                `json:"sortType,omitempty"`
+	StartIndex int                   `json:"startIndex,omitempty"`
+	TotalCount int                   `json:"totalCount,omitempty"`
 }
 
 type TimeBoundary struct {
-	EndTime   string `json:"endTime"`
-	StartTime string `json:"startTime"`
-	TimeZone  string `json:"timeZone"`
+	EndTime   string `json:"endTime,omitempty"`
+	StartTime string `json:"startTime,omitempty"`
+	TimeZone  string `json:"timeZone,omitempty"`
 }
 
 type AtlasEntityHeader struct {
-	Attributes          map[string]interface{}      `json:"attributes"`
-	ClassificationNames []string                    `json:"classificationNames"`
-	Classifications     []AtlasClassification       `json:"classifications"`
-	DisplayText         string                      `json:"displayText"`
-	Guid                string                      `json:"guid"`
-	IsIncomplete        bool                        `json:"isIncomplete"`
-	Labels              []string                    `json:"labels"`
-	LastModifiedTS      string                      `json:"lastModifiedTS"`
-	MeaningNames        []string                    `json:"meaningNames"`
-	Meanings            []AtlasTermAssignmentHeader `json:"meanings"`
-	Status              Status                      `json:"status"`
-	TypeName            string                      `json:"typeName"`
+	Attributes          map[string]interface{}      `json:"attributes,omitempty"`
+	ClassificationNames []string                    `json:"classificationNames,omitempty"`
+	Classifications     []AtlasClassification       `json:"classifications,omitempty"`
+	DisplayText         string                      `json:"displayText,omitempty"`
+	Guid                string                      `json:"guid,omitempty"`
+	IsIncomplete        bool                        `json:"isIncomplete,omitempty"`
+	Labels              []string                    `json:"labels,omitempty"`
+	LastModifiedTS      string                      `json:"lastModifiedTS,omitempty"`
+	MeaningNames        []string                    `json:"meaningNames,omitempty"`
+	Meanings            []AtlasTermAssignmentHeader `json:"meanings,omitempty"`
+	Status              Status                      `json:"status,omitempty"`
+	TypeName            string                      `json:"typeName,omitempty"`
 }
 
 type AtlasEntityWithExtInfo struct {
-	Entity           Entity                 `json:"entity"`
-	ReferredEntities map[string]interface{} `json:"referredEntities"`
+	Entity           Entity                 `json:"entity,omitempty"`
+	ReferredEntities map[string]interface{} `json:"referredEntities,omitempty"`
 }
 
 type EntityMutationResponse struct {
-	GuidAssignments       map[string]string      `json:"guidAssignments"`
-	MutatedEntities       map[string]interface{} `json:"mutatedEntities"`
-	PartialUpdateEntities []AtlasEntityHeader    `json:"partialUpdateEntities"`
+	GuidAssignments       map[string]string      `json:"guidAssignments,omitempty"`
+	MutatedEntities       map[string]interface{} `json:"mutatedEntities,omitempty"`
+	PartialUpdateEntities []AtlasEntityHeader    `json:"partialUpdateEntities,omitempty"`
 }
 
 type AtlasTermAssignmentHeader struct {
-	Confidence   int                   `json:"confidence"`
-	CreatedBy    string                `json:"createdBy"`
-	Description  string                `json:"description"`
-	DisplayText  string                `json:"displayText"`
-	Expression   string                `json:"expression"`
-	RelationGuid string                `json:"relationGuid"`
-	Source       string                `json:"source"`
-	Status       AtlasAssignmentStatus `json:"status"`
-	Steward      string                `json:"steward"`
-	TermGuid     string                `json:"termGuid"`
+	Confidence   int                   `json:"confidence,omitempty"`
+	CreatedBy    string                `json:"createdBy,omitempty"`
+	Description  string                `json:"description,omitempty"`
+	DisplayText  string                `json:"displayText,omitempty"`
+	Expression   string                `json:"expression,omitempty"`
+	RelationGuid string                `json:"relationGuid,omitempty"`
+	Source       string                `json:"source,omitempty"`
+	Status       AtlasAssignmentStatus `json:"status,omitempty"`
+	Steward      string                `json:"steward,omitempty"`
+	TermGuid     string                `json:"termGuid,omitempty"`
 }
 
 type AtlasAssignmentStatus struct {
@@ -102,25 +102,25 @@ type Entity struct {
 }
 
 type BulkImportResponse struct {
-	FailedImportInfoList  []ImportInfo `json:"failedImportInfoList"`
-	SuccessImportInfoList []ImportInfo `json:"successImportInfo"`
+	FailedImportInfoList  []ImportInfo `json:"failedImportInfoList,omitempty"`
+	SuccessImportInfoList []ImportInfo `json:"successImportInfo,omitempty"`
 }
 
 type ImportInfo struct {
-	ChildObjectName  string `json:"childObjectName"`
-	ImportStatus     string `json:"importStatus"`
-	ParentObjectName string `json:"parentObjectName"`
-	Remarks          string `json:"remarks"`
+	ChildObjectName  string `json:"childObjectName,omitempty"`
+	ImportStatus     string `json:"importStatus,omitempty"`
+	ParentObjectName string `json:"parentObjectName,omitempty"`
+	Remarks          string `json:"remarks,omitempty"`
 }
 
 type EntityCreateOrUpdateRequest struct {
-	Entity           Entity                 `json:"entity"`
-	ReferredEntities map[string]interface{} `json:"referredEntities"`
+	Entity           Entity                 `json:"entity,omitempty"`
+	ReferredEntities map[string]interface{} `json:"referredEntities,omitempty"`
 }
 
 type EntityCreateOrUpdateBulkRequest struct {
-	Entity           []Entity               `json:"entity"`
-	ReferredEntities map[string]interface{} `json:"referredEntities"`
+	Entity           []Entity               `json:"entity,omitempty"`
+	ReferredEntities map[string]interface{} `json:"referredEntities,omitempty"`
 }
 
 func UnmarshalEntity(data []byte) (*Entity, error) {

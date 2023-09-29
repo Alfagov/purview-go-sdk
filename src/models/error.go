@@ -6,9 +6,9 @@ import (
 )
 
 type ErrorResponse struct {
-	ErrorCode    string `json:"errorCode"`
-	ErrorMessage string `json:"errorMessage"`
-	RequestId    string `json:"requestId"`
+	ErrorCode    string `json:"errorCode,omitempty"`
+	ErrorMessage string `json:"errorMessage,omitempty"`
+	RequestId    string `json:"requestId,omitempty"`
 }
 
 var (
