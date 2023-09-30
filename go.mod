@@ -1,3 +1,3 @@
-module github.com/Alfagov/purview-go-sdk
+module github.com/Alfagov/pwCatalog
 
 go 1.21.1

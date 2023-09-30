@@ -1,8 +1,8 @@
 package entity
 
 import (
-	"github.com/Alfagov/purview-go-sdk/src/client"
-	"github.com/Alfagov/purview-go-sdk/src/models"
+	"github.com/Alfagov/pwCatalog/src/client"
+	"github.com/Alfagov/pwCatalog/src/models"
 )
 
 type Entity interface {

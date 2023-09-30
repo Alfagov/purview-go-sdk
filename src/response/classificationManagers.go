@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/Alfagov/purview-go-sdk/src/models"
+	"github.com/Alfagov/pwCatalog/src/models"
 	"io"
 	"net/http"
 )

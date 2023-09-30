@@ -1,11 +1,11 @@
 package Collection
 
 import (
-	"github.com/Alfagov/purview-go-sdk/src/client"
-	"github.com/Alfagov/purview-go-sdk/src/models"
-	"github.com/Alfagov/purview-go-sdk/src/paths"
-	"github.com/Alfagov/purview-go-sdk/src/response"
-	"github.com/Alfagov/purview-go-sdk/src/utils"
+	"github.com/Alfagov/pwCatalog/src/client"
+	"github.com/Alfagov/pwCatalog/src/models"
+	"github.com/Alfagov/pwCatalog/src/paths"
+	"github.com/Alfagov/pwCatalog/src/response"
+	"github.com/Alfagov/pwCatalog/src/utils"
 	"net/http"
 )
 

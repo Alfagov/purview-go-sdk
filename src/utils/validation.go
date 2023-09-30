@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/Alfagov/purview-go-sdk/src/models"
+import "github.com/Alfagov/pwCatalog/src/models"
 
 func ValidateGuid(guid string) error {
 	if guid == "" {
